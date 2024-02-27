@@ -22,9 +22,9 @@ function App() {
 
     if (! await tf.ready()) {
       console.log('tf is not ready, waiting for getting ready')
-      await setupWebGL()
-    }
 
+    }
+    await setupWebGL()
     // 3. TODO - Load network 
     // e.g. 
     const net = await cocossd.load()
@@ -37,13 +37,13 @@ function App() {
     async function loopAndDetect() {
       if (isRunning) {
         await detect(net)
-        setTimeout(loopAndDetect, 10) // 每次检测完成后，若仍在运行则重新设置setTimeout
+        setTimeout(loopAndDetect,10) // 每次检测完成后，若仍在运行则重新设置setTimeout
       }
     }
     loopAndDetect()
   }
 
-  const detect = async (net) => {
+  const detect = async (/** @type {cocossd.ObjectDetection}  */net) => {
     // Check data is available
     if (
       typeof webcamRef.current !== "undefined" &&
@@ -66,7 +66,7 @@ function App() {
       // 4. TODO - Make Detections
       // e.g. const obj = await net.detect(video);
       const obj = await net.detect(video)
-      console.log(obj);
+      console.log(obj)
       // Draw mesh
       const ctx = canvasRef.current.getContext("2d")
 
@@ -79,6 +79,7 @@ function App() {
   async function setupWebGL() {
 
     if (!tf.getBackend()) { // 如果尚未设置后端
+      console.log('Setting up WebGL backend.')
       if (tf.env().getBool('IS_BROWSER') &&
         typeof window !== 'undefined' &&
         ('WebGLRenderingContext' in window)) {
